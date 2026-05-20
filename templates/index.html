@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Student Grades - Inicio{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="hero__content">
+        <h1 class="hero__title">Gestion Academica</h1>
+        <p class="hero__subtitle">Consulta el detalle academico de un alumno por su numero de padron</p>
+    </div>
+</section>
+
+<section class="search-section">
+    <div class="search-card">
+        <h2 class="search-card__title">Buscar alumno</h2>
+        <p class="search-card__subtitle">Ingresa el padron para ver sus materias y notas</p>
+
+        <form method="POST" class="form">
+            <div class="form__group">
+                <label for="padron" class="form__label">Numero de padron</label>
+                <input
+                    type="text"
+                    id="padron"
+                    name="padron"
+                    class="form__input"
+                    placeholder="Ej: 1"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="form__actions form__actions--single">
+                <button type="submit" class="form__btn form__btn--submit">Buscar datos del alumno</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}

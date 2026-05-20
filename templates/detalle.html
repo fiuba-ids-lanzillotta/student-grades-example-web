@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de {{ alumno.nombre }} {{ alumno.apellido }} - Student Grades{% endblock %}
+
+{% block content %}
+
+<section class="detalle">
+    <div class="detalle__header">
+        <a href="{{ url_for('alumnos.index') }}" class="detalle__back">&#8592; Volver</a>
+        <h1 class="detalle__name">{{ alumno.nombre }} {{ alumno.apellido }}</h1>
+        <div class="detalle__datos">
+            <div class="detalle__dato">
+                <span class="detalle__dato-label">Padron</span>
+                <span class="detalle__dato-value">{{ alumno.padron }}</span>
+            </div>
+            <div class="detalle__dato">
+                <span class="detalle__dato-label">Materias cursadas</span>
+                <span class="detalle__dato-value">{{ materias | length }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="detalle__body">
+        <div class="detalle__body-header">
+            <h2 class="detalle__section-title">Materias cursadas</h2>
+            <button class="form__btn form__btn--submit" onclick="abrirModalAgregar()">+ Agregar nota</button>
+        </div>
+
+        {% if materias %}
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Materia</th>
+                        <th>Nota</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in materias %}
+                    <tr class="data-table__row {% if m.nota >= 6 %}data-table__row--ok{% else %}data-table__row--fail{% endif %}">
+                        <td>
+                            <a href="#" class="data-table__link" onclick="mostrarAlumnosMateria('{{ m.codigo }}'); return false;">{{ m.codigo }}</a>
+                        </td>
+                        <td>
+                            <a href="#" class="data-table__link" onclick="mostrarDetalleMateria('{{ m.nombre|e }}', '{{ m.nota }}', '{{ m.fecha }}'); return false;">{{ m.nombre }}</a>
+                        </td>
+                        <td><strong>{{ m.nota }}</strong></td>
+                        <td>{{ m.fecha }}</td>
+                        <td>
+                            {% if m.nota >= 6 %}
+                                <span class="badge badge--ok">Aprobada</span>
+                            {% else %}
+                                <span class="badge badge--fail">Reprobada</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>Este alumno todavia no tiene materias cursadas.</p>
+            <p>Hace clic en <strong>Agregar nota</strong> para registrar la primera.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Modal: Agregar nota -->
+<div id="modalAgregar" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal__content">
+        <button class="modal__close" onclick="cerrarModalAgregar()" aria-label="Cerrar">&times;</button>
+        <h2 class="modal__title">Agregar nota</h2>
+        <p class="modal__subtitle">Registra una nueva materia y su nota para {{ alumno.nombre }}</p>
+
+        <form method="POST" class="form">
+            <div class="form__group">
+                <label for="codigo" class="form__label">Codigo de materia</label>
+                <input type="text" id="codigo" name="codigo" class="form__input" placeholder="Ej: TB022" required>
+            </div>
+
+            <div class="form__row">
+                <div class="form__group">
+                    <label for="nota" class="form__label">Nota</label>
+                    <input type="number" id="nota" name="nota" class="form__input" min="1" max="10" required>
+                </div>
+                <div class="form__group">
+                    <label for="fecha" class="form__label">Fecha</label>
+                    <input type="date" id="fecha" name="fecha" class="form__input" required>
+                </div>
+            </div>
+
+            <div class="form__actions">
+                <button type="button" class="form__btn form__btn--cancel" onclick="cerrarModalAgregar()">Cancelar</button>
+                <button type="submit" class="form__btn form__btn--submit">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Detalle de materia -->
+<div id="modalDetalleMateria" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal__content">
+        <button class="modal__close" onclick="cerrarModalDetalleMateria()" aria-label="Cerrar">&times;</button>
+        <h2 class="modal__title">Detalle de la materia</h2>
+
+        <div class="detalle__datos detalle__datos--modal">
+            <div class="detalle__dato">
+                <span class="detalle__dato-label">Materia</span>
+                <span class="detalle__dato-value" id="detalleMateriaNombre"></span>
+            </div>
+            <div class="detalle__dato">
+                <span class="detalle__dato-label">Nota</span>
+                <span class="detalle__dato-value" id="detalleMateriaNota"></span>
+            </div>
+            <div class="detalle__dato">
+                <span class="detalle__dato-label">Fecha</span>
+                <span class="detalle__dato-value" id="detalleMateriaFecha"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Alumnos que cursan la materia -->
+<div id="modalAlumnosMateria" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+        <button class="modal__close" onclick="cerrarModalAlumnosMateria()" aria-label="Cerrar">&times;</button>
+        <h2 class="modal__title">Alumnos de <span id="nombreMateriaModal"></span></h2>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Padron</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                    </tr>
+                </thead>
+                <tbody id="alumnosMateriaTabla"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function abrirModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.add('modal--open');
+    modal.setAttribute('aria-hidden', 'false');
+}
+
+function cerrarModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.remove('modal--open');
+    modal.setAttribute('aria-hidden', 'true');
+}
+
+function abrirModalAgregar()  { abrirModal('modalAgregar'); }
+function cerrarModalAgregar() { cerrarModal('modalAgregar'); }
+
+function mostrarDetalleMateria(nombre, nota, fecha) {
+    document.getElementById('detalleMateriaNombre').textContent = nombre;
+    document.getElementById('detalleMateriaNota').textContent   = nota;
+    document.getElementById('detalleMateriaFecha').textContent  = fecha;
+    abrirModal('modalDetalleMateria');
+}
+function cerrarModalDetalleMateria() { cerrarModal('modalDetalleMateria'); }
+
+async function mostrarAlumnosMateria(codigo) {
+    document.getElementById('nombreMateriaModal').textContent = codigo;
+    const tabla = document.getElementById('alumnosMateriaTabla');
+    tabla.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#888;">Cargando...</td></tr>';
+    abrirModal('modalAlumnosMateria');
+
+    try {
+        const res = await fetch(`/materias/${encodeURIComponent(codigo)}/alumnos`);
+        const alumnos = await res.json();
+
+        if (!alumnos.length) {
+            tabla.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#888;">No hay alumnos cursando esta materia.</td></tr>';
+            return;
+        }
+
+        tabla.innerHTML = '';
+        alumnos.forEach(a => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `<td>${a.padron}</td><td>${a.nombre}</td><td>${a.apellido}</td>`;
+            tabla.appendChild(fila);
+        });
+    } catch (e) {
+        tabla.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#c00;">Error al cargar los alumnos.</td></tr>';
+    }
+}
+function cerrarModalAlumnosMateria() { cerrarModal('modalAlumnosMateria'); }
+
+// Cerrar modales al hacer click fuera o con ESC
+window.addEventListener('click', function (event) {
+    document.querySelectorAll('.modal--open').forEach(m => {
+        if (event.target === m) cerrarModal(m.id);
+    });
+});
+
+window.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+        document.querySelectorAll('.modal--open').forEach(m => cerrarModal(m.id));
+    }
+});
+</script>
+{% endblock %}

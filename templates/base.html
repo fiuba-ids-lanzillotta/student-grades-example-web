@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Student Grades{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <header class="header">
+        <nav class="nav">
+            <a href="{{ url_for('alumnos.index') }}" class="nav__logo">
+                <span class="nav__logo-icon">&#127891;</span>
+                Student Grades
+            </a>
+            <ul class="nav__links">
+                <li><a href="{{ url_for('alumnos.index') }}" class="nav__link">Inicio</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                <div class="flash flash--{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Student Grades Example &mdash; Ejercicio integrador IDS</p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>
