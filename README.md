@@ -142,3 +142,31 @@ El frontend define un **error handler 404** centralizado en `app.py` que renderi
 
 - **Rutas inexistentes**: cualquier URL no mapeada por la app.
 - **Alumno inexistente**: cuando la ruta `/detalle/<padron>` no encuentra un alumno, llama a `abort(404, description=...)` con un mensaje especifico que se muestra en la pagina de error.
+
+## Glosario de terminos
+
+- **API REST**: estilo de arquitectura para servicios web que expone recursos via HTTP (GET, POST, PUT, DELETE) usando, en general, JSON como formato de intercambio.
+- **Endpoint**: ruta concreta de la API (por ejemplo `GET /alumnos/<padron>`) que responde a un metodo HTTP y realiza una accion sobre un recurso.
+- **Body**: contenido (payload) de una request o response. En esta web los formularios llegan al backend como JSON.
+- **JSON**: formato de texto para representar datos estructurados (objetos y arrays). Es el formato usado para los bodies de request y response.
+- **Flask**: micro framework web de Python. En este ejemplo se usa tanto en el frontend (este proyecto) como en la API backend.
+- **Frontend**: aplicacion que renderiza las paginas HTML del lado del servidor y consume la API. En este proyecto corre en el puerto 5001.
+- **Backend / API**: servicio HTTP REST (`student-grades-example-api`) que expone los endpoints de alumnos, notas y materias. Corre en el puerto 5000.
+- **Blueprint (Flask)**: mecanismo de Flask para agrupar rutas relacionadas en modulos (por ejemplo `routes/alumnos.py`).
+- **Service**: capa con la logica de invocacion a la API (cliente HTTP). Vive en `services/` y es invocada desde las routes.
+- **SSR (Server-Side Rendering)**: renderizado del HTML en el servidor (con Jinja2) antes de enviarlo al navegador. Es el enfoque usado en este frontend.
+- **SPA (Single Page Application)**: alternativa al SSR donde el frontend corre como JavaScript en el navegador y consume la API directamente. **No** es lo que hace este proyecto.
+- **Jinja2**: motor de templates que usa Flask para generar HTML dinamico (los archivos `.html` en `templates/`).
+- **Template base (`base.html`)**: plantilla con la estructura comun (header, footer, flash) de la que heredan las demas paginas.
+- **Flash message**: mensaje temporal de una sola lectura que Flask muestra al usuario tras una accion (exito o error).
+- **`requests`**: libreria de Python que el frontend usa para hacer llamadas HTTP a la API.
+- **`fetch` (JavaScript)**: API del navegador para hacer requests HTTP de forma asincronica desde el cliente. Se usa puntualmente en `static/js/detalle.js` para actualizar el modal sin recargar la pagina.
+- **`abort` (Flask)**: helper de Flask que interrumpe el procesamiento de la request y devuelve un error HTTP (por ejemplo `abort(404)`).
+- **Error handler**: funcion registrada con `@app.errorhandler(...)` que centraliza el render de paginas de error (por ejemplo `templates/404.html`).
+- **Entorno virtual**: directorio aislado con la version de Python y las dependencias del proyecto, para no mezclarlas con las del sistema.
+- **virtualenv / `venv`**: herramienta estandar de Python para crear entornos virtuales. Las dependencias se declaran en `requirements.txt` y se instalan con `pip install -r requirements.txt`. En este proyecto lo levantan los scripts `setup_virtualenv.sh` / `setup_virtualenv.bat`.
+- **pipenv**: herramienta alternativa que combina la gestion del entorno virtual con la de dependencias en un solo flujo. Usa `Pipfile` (declaracion) y `Pipfile.lock` (versiones exactas resueltas) en vez de `requirements.txt`. En este proyecto lo levantan los scripts `setup_pipenv.sh` / `setup_pipenv.bat`.
+- **`pip`**: gestor de paquetes de Python. Instala librerias desde PyPI dentro del entorno activo.
+- **Padron**: identificador unico del alumno (entero positivo).
+- **Materia**: asignatura identificada por un `codigo` corto (por ejemplo `TB022`).
+- **Nota**: calificacion entera entre 1 y 10 asociada a un alumno y una materia en una fecha determinada. Se considera **aprobada** cuando es `>= 6`.
