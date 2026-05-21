@@ -1,5 +1,7 @@
 # Student Grades Example - Web
 
+> **Aviso:** este proyecto es **codigo de ejemplo** con fines didacticos. Puede contener errores, simplificaciones o decisiones de diseno discutibles. Si se usa como base para un trabajo practico u otro entregable, **debe adaptarse a las buenas practicas y consignas especificas de la materia/catedra** (estilo de codigo, manejo de errores, validaciones, tests, estructura, etc.).
+
 ## Motivacion
 
 Este proyecto es el **frontend** de un **ejemplo integrador** que muestra como construir una pequena aplicacion full-stack (frontend + backend) usando Flask, donde el frontend consume una API REST en lugar de acceder directamente a la base de datos.
@@ -100,6 +102,39 @@ Una vez iniciada, la web estara disponible en `http://localhost:5001/`
    - Hacer clic en el **codigo** de una materia para ver los alumnos que la cursan (modal con `fetch` a la propia ruta del frontend, que actua como proxy de la API).
    - Hacer clic en el **nombre** de una materia para ver el detalle de esa nota.
    - Hacer clic en **Agregar nota** para abrir un modal y registrar una nueva (POST al backend).
+
+## Por que se usa `fetch` + JSON en `/materias/<codigo>/alumnos`
+
+Aunque la preferencia general del proyecto es que la comunicacion entre frontend y backend se resuelva con **Flask + Python (SSR)**, hay un caso puntual que se resuelve con una llamada asincronica desde el navegador (`fetch`) a una ruta del propio frontend que devuelve **JSON**: el modal que lista los alumnos que cursan una materia desde `/detalle/<padron>`.
+
+### El problema concreto
+
+El usuario esta parado en `/detalle/<padron>` viendo a **un alumno** y, sin moverse de esa pagina, quiere abrir un modal con la lista de alumnos que cursan **otra materia**. El requerimiento es **mostrar nueva informacion dentro de la pagina actual, sin recargarla ni perder el contexto** (scroll, modales abiertos, estado del formulario).
+
+### Por que Flask "solo" no alcanza
+
+Flask con renderizado del lado del servidor responde a **navegaciones**: cada request devuelve una pagina HTML completa que reemplaza la actual. Con solo Flask + Python las opciones serian:
+
+- **Navegar a `/materias/<codigo>/alumnos` como pagina HTML completa**: el usuario abandona `/detalle/<padron>` y pierde el contexto. Necesita "Volver" para retomar.
+- **Pre-renderizar los alumnos de TODAS las materias dentro de `detalle.html`**: hace N llamadas extra a la API en cada carga del detalle aunque el usuario no abra ningun modal, aumenta el tiempo de respuesta y acopla datos que quiza nunca se pidan.
+
+### Que resuelve la version con `fetch`
+
+El `fetch` desde `static/js/detalle.js` permite **actualizacion parcial bajo demanda**:
+
+- Se carga el detalle del alumno una sola vez.
+- Cuando el usuario hace clic en un codigo de materia, **recien ahi** se dispara un request asincronico al endpoint del frontend, que internamente llama a la API.
+- La respuesta es **JSON** porque solo necesitamos los datos; el "como mostrarlos" (filas `<tr>` del modal) ya esta definido en el DOM/JS de la pagina actual.
+- El navegador inyecta esos datos en la tabla del modal sin recargar la pagina.
+
+### Resumen
+
+Lo que `fetch` + JSON resuelve y Flask puro no puede:
+
+- **Cargar datos sin recargar la pagina** (preservar contexto del usuario).
+- **Cargar solo lo necesario, cuando se necesita** (evitar trabajo y red innecesarios al renderizar la pagina inicial).
+
+Es el limite natural del SSR: en el momento en que se requieren interacciones dinamicas dentro de una misma vista, hace falta JavaScript en el cliente haciendo HTTP. Flask sigue siendo el servidor, pero el navegador deja de ser un mero "renderer" pasivo.
 
 ## Manejo de errores
 
