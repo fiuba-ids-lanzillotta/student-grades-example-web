@@ -16,7 +16,7 @@
         <h2 class="search-card__title">Buscar alumno</h2>
         <p class="search-card__subtitle">Ingresa el padron para ver sus materias y notas</p>
 
-        <form method="POST" class="form">
+        <form action="{{url_for('alumnos.index')}}" method="POST" class="form">
             <div class="form__group">
                 <label for="padron" class="form__label">Numero de padron</label>
                 <input

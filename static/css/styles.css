@@ -580,6 +580,81 @@ a {
 }
 
 /* ---------------------------------------------------------------
+   Error Page (404 / errores generales)
+   --------------------------------------------------------------- */
+.error-page {
+    max-width: 560px;
+    margin: 4rem auto;
+    padding: 3rem 2.5rem;
+    background-color: var(--color-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    border-top: 6px solid var(--color-danger);
+}
+
+.error-page__icon {
+    font-size: 3.5rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.error-page__code {
+    font-size: 5rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.error-page__title {
+    font-size: 1.6rem;
+    color: var(--color-dark);
+    margin-bottom: 1rem;
+}
+
+.error-page__message {
+    color: var(--color-gray);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+}
+
+.error-page__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.error-page__link {
+    display: inline-block;
+    padding: 0.7rem 1.6rem;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-radius: var(--radius);
+    font-weight: 600;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.error-page__link:hover {
+    background-color: var(--color-primary-dk);
+    transform: translateY(-2px);
+}
+
+.error-page__link--secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+}
+
+.error-page__link--secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+/* ---------------------------------------------------------------
    Responsive
    --------------------------------------------------------------- */
 @media (max-width: 768px) {

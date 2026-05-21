@@ -7,39 +7,37 @@ logger = logging.getLogger(__name__)
 
 def obtener_alumno(padron) -> dict:
     """Consume el endpoint del backend para obtener los datos de un alumno por padron."""
+    alumno = {}
+
     try:
         response = requests.get(f'{API_BASE_URL}/alumnos/{padron}', timeout=10)
 
         if response.status_code == 200:
-            return response.json()
-
-        return {}
+            alumno = response.json()
 
     except requests.exceptions.ConnectionError:
         logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
 
-        return {}
-
     except Exception as e:
         logger.error(f"Error al obtener alumno {padron}: {e}")
 
-        return {}
+    return alumno
 
 
 def obtener_notas_alumno(padron) -> list[dict]:
     """Consume el endpoint del backend para obtener las notas de un alumno."""
+    notas = []
+
     try:
         response = requests.get(f'{API_BASE_URL}/alumnos/{padron}/notas', timeout=10)
 
         if response.status_code == 200:
-            return response.json()
-
-        return []
+            notas = response.json()
 
     except Exception as e:
         logger.error(f"Error al obtener notas del alumno {padron}: {e}")
 
-        return []
+    return notas
 
 
 def agregar_nota(padron, codigo: str, nota, fecha: str) -> dict:

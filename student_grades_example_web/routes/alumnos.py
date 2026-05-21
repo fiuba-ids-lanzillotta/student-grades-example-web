@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort
 from ..services.alumnos import obtener_alumno, obtener_notas_alumno, agregar_nota
 from ..services.materias import obtener_alumnos_materia
 from ..constants import NOTA_MIN, NOTA_MAX
@@ -65,9 +65,7 @@ def detalle_alumno(padron):
     alumno = obtener_alumno(padron)
 
     if not alumno:
-        flash(f'No se encontro un alumno con padron {padron}.', 'error')
-
-        return redirect(url_for('alumnos.index'))
+        abort(404, description=f'No se encontro un alumno con padron {padron}.')
 
     materias = obtener_notas_alumno(padron)
 

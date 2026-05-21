@@ -40,7 +40,8 @@ student-grades-example-web/
 ├── templates/
 │   ├── base.html                       # Template base (header, footer, flash)
 │   ├── index.html                      # Home con buscador por padron
-│   └── detalle.html                    # Detalle del alumno + modales
+│   ├── detalle.html                    # Detalle del alumno + modales
+│   └── 404.html                        # Pagina de error 404 (ruta o alumno inexistente)
 └── static/
     └── css/
         └── styles.css                  # Estilos responsive
@@ -97,3 +98,10 @@ Una vez iniciada, la web estara disponible en `http://localhost:5001/`
    - Hacer clic en el **codigo** de una materia para ver los alumnos que la cursan (modal con `fetch` a la propia ruta del frontend, que actua como proxy de la API).
    - Hacer clic en el **nombre** de una materia para ver el detalle de esa nota.
    - Hacer clic en **Agregar nota** para abrir un modal y registrar una nueva (POST al backend).
+
+## Manejo de errores
+
+El frontend define un **error handler 404** centralizado en `app.py` que renderiza `templates/404.html`. Este handler cubre dos casos:
+
+- **Rutas inexistentes**: cualquier URL no mapeada por la app.
+- **Alumno inexistente**: cuando la ruta `/detalle/<padron>` no encuentra un alumno, llama a `abort(404, description=...)` con un mensaje especifico que se muestra en la pagina de error.
