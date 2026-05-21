@@ -43,8 +43,10 @@ student-grades-example-web/
 │   ├── detalle.html                    # Detalle del alumno + modales
 │   └── 404.html                        # Pagina de error 404 (ruta o alumno inexistente)
 └── static/
-    └── css/
-        └── styles.css                  # Estilos responsive
+    ├── css/
+    │   └── styles.css                  # Estilos responsive
+    └── js/
+        └── detalle.js                  # Logica de modales y fetch de alumnos por materia
 ```
 
 ## Requisitos previos
